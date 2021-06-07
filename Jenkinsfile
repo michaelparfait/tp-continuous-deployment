@@ -4,19 +4,20 @@ pipeline {
 
     stage('git') {
       steps {
-        git url: 'https://github.com/michaelparfait/tp-continuous-deployment.git'
+        git branch: 'main',
+            url: 'https://github.com/michaelparfait/tp-continuous-deployment.git'
       }
     }
 
     stage('build') {
       steps {
-        sh 'docker build -t michael/hashservice .'
+        sh 'sudo docker build -t michael/hashservice .'
       }
     }
 
     stage('run') {
       steps {
-        sh 'docker run -d --name hs -p 3000:3000 --rm michael/hashservice'
+        sh 'sudo docker run -d --name hs -p 3000:3000 --rm michael/hashservice'
       }
     }
 
