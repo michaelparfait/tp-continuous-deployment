@@ -1,0 +1,95 @@
+-
+  name: Deploy to ubuntus
+  hosts: ubuntu
+  vars:
+    - TARGET_DIR: /home/jenkins/hashservice/
+
+  tasks:
+    - name: Create build directory
+      file:
+        path: "{{TARGET_DIR}}"
+        state: directory
+
+    - name: Copy Dockerfile + app files
+      copy:
+        src: ./{{item}}
+        dest: "{{TARGET_DIR}}"
+      with_items:
+        - 'Dockerfile'
+        - 'package.json'
+        - 'index.js'
+
+    - name: Build docker image
+      docker_image:
+        path: "{{TARGET_DIR}}"
+        name: hashservice
+        tag: v1
+
+    - name: Run containers
+      tags: run_containers
+      docker_container:
+        name: "{{item.name}}"
+        image: hashservice:v1
+        state: started
+        forcekill: yes
+        recreate: yes
+        ports:
+          - "{{item.port}}:3000"
+      with_items:
+        - { name: hashservice1, port: 3001 }
+        - { name: hashservice2, port: 3002 }
+        - { name: hashservice3, port: 3003 }
+
+- 
+  name: Deploy to centos
+  tags: centos
+  hosts: centos
+  vars:
+    - API_URL: '192.168.33.102:3002'
+
+  tasks:
+    - name: Install softs
+      tags: install_softs
+      become: yes
+      yum:
+        name: "{{item}}"
+        state: present
+      loop: ['unzip', 'httpd']
+    
+    - name: Start httpd
+      become: yes
+      service:
+        name: httpd
+        state: started
+    
+    - name: Change apache doc root perms
+      become: yes
+      file:
+        path: /var/www
+        mode: u=rwX,g=rX,o=rX #755
+        owner: vagrant
+        recurse: yes
+
+    - name: Unarchive a file that needs to be downloaded
+      tags: unarchive_front_app
+      unarchive:
+        src: https://opusidea-training.s3.eu-west-3.amazonaws.com/divers/hashservice-client.zip
+        dest: /home/vagrant
+        remote_src: yes
+
+    - name: Replace api url
+      replace:
+        path: /home/vagrant/hashservice-client/index.js
+        regexp: 'localhost:3000'
+        replace: "{{API_URL}}"
+
+    - name: Copy app files to apache doc root
+      command: cp /home/vagrant/hashservice-client/{{item}} /var/www/html
+      with_items:
+        - 'index.html'
+        - 'index.js'
+
+    - name: Disable selinux
+      become: yes
+      command: setenforce 0
+      

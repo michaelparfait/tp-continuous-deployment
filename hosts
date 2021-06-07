@@ -1,0 +1,17 @@
+controlledmachine1 ansible_host=192.168.33.112 ansible_user=vagrant ansible_ssh_private_key_file=/home/vagrant/ansible/keys/target1.pem
+controlledmachine2 ansible_host=192.168.33.113 ansible_user=vagrant ansible_ssh_private_key_file=/home/vagrant/ansible/keys/target2.pem
+controlledmachine3 ansible_host=192.168.33.114 ansible_user=vagrant ansible_ssh_private_key_file=/home/vagrant/ansible/keys/target2.pem
+
+[ubuntu]
+controlledmachine1
+controlledmachine2
+
+[centos]
+controlledmachine3
+
+
+[ubuntu:vars]
+ansible_python_interpreter =/usr/bin/python3
+
+[centos:vars]
+ansible_python_interpreter =/usr/bin/python3
