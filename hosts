@@ -1,6 +1,6 @@
-controlledmachine1 ansible_host=192.168.33.112 ansible_user=vagrant ansible_ssh_private_key_file=/home/vagrant/ansible/keys/target1.pem
-controlledmachine2 ansible_host=192.168.33.113 ansible_user=vagrant ansible_ssh_private_key_file=/home/vagrant/ansible/keys/target2.pem
-controlledmachine3 ansible_host=192.168.33.114 ansible_user=vagrant ansible_ssh_private_key_file=/home/vagrant/ansible/keys/target2.pem
+controlledmachine1 ansible_host=192.168.33.112 ansible_user=jenkins ansible_ssh_private_key_file=/home/vagrant/tp-continuous-deployment/keys/target1.pem
+controlledmachine2 ansible_host=192.168.33.113 ansible_user=jenkins ansible_ssh_private_key_file=/home/tp-continuous-deployment/ansible/keys/target2.pem
+controlledmachine3 ansible_host=192.168.33.114 ansible_user=vagrant ansible_ssh_private_key_file=/home/tp-continuous-deployment/ansible/keys/target2.pem
 
 [ubuntu]
 controlledmachine1
